@@ -1,0 +1,76 @@
+body {
+  font-family: 'Strasua', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  background-image: url('src/assets/bgc.jpg');
+  background-size: cover;
+  background-repeat: no-repeat; 
+  background-position: center;
+  min-height: 1200px;
+}
+
+
+header {
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+
+.logo-block {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+  fill: #ffffff;
+}
+
+.title {
+  font-size: 24px;
+  color: #ffffff;
+}
+
+
+.main-content {
+  padding: 20px;
+}
+
+.board-block {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #819AD1, #446ABF);
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.board-block:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  background-color: #345BB4; 
+}
+
+.board-block i {
+  font-size: 18px;
+  margin-right: 8px;
+}
+
+.board-block span {
+  font-size: 16px;
+}
+
+.plus{
+  padding-right: 8px;
+}
