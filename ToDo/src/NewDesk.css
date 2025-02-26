@@ -1,68 +1,31 @@
-.new-desk{
-    display:block;
-    align-items: center;
-    justify-content: center;
-    padding: 15px 20px;
-    background: linear-gradient(135deg, #819AD1, #446ABF);
-    color: white;
+.new-desk {
+    padding: 20px;
+    background-color: #f0f0f0;
     border-radius: 8px;
-    cursor: pointer;
-    margin-left: 20px;
-    margin-top: 20px;
-    height: 250px;
-    width: 250px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 80%;
 }
 
-
-.h2{
-    font-size: 32px;
-    color: #ffffff;
-    font-family: 'Strasua', sans-serif;
-    text-align:center;
-    margin-top: 10px;
+.desk-name {
+    width: 90%; 
+    padding: 10px;
+    margin-bottom: 10px;
+    box-sizing: border-box; 
 }
-.desk-name{
-    font-size: 18px;
-    color: #ffffff;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    text-align:left;
-    margin-top: 16px;
-    width: 100%;
+
+.cancel-desk, .save-desk {
+    padding: 10px 20px;
+    border: none;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.save-desk{
-    font-size: 18px;
-    background-color: rgb(87, 87, 181);;
-    color:white;
-    border-radius: 8px;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    text-align:left;
-    padding: 8px 8px;
-    margin-top: 24px;
-    margin-left: 16px;
-    width: 100px;
-    align-items: center;
-    justify-content: center;
-    width: 120px;
+.cancel-desk {
+    background-color: #ccc;
+    margin-right: 16px;
 }
 
-
-.cancel-desk{
+.save-desk {
+    background-color: #007bff;
     color: white;
-    background-color: rgb(179, 179, 179);
-    border-radius: 8px;
-    font-size: 18px;
-    stroke: black;
-    stroke-width: 0.5;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 200;
-    text-align:left;
-    padding: 8px 8px;
-    margin-top: 24px;
-    align-items: center;
-    justify-content: center;
-    width: 100px;
 }

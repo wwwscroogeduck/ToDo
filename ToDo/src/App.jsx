@@ -1,18 +1,8 @@
 import './App.css';
-import NewDesk from './NewDesk.jsx';
-import { useState } from 'react';
+import CreateDesk from './CreateDesk.jsx';
+// import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
 function App() {
-    const [showNewDesk, setShowNewDesk] = useState(false);
-
-    const handleNewDeskClick = () => {
-        setShowNewDesk(true);
-    };
-
-    const handleCancelClick = () => {
-        setShowNewDesk(false);
-    };
-
     return (
         <>
             <header>
@@ -22,18 +12,9 @@ function App() {
                 </div>
             </header>
 
-            <div className="boards">
-                {!showNewDesk && (
-                    <button className="board-block" onClick={handleNewDeskClick}>
-                        <img src="public/plus.svg" alt="Добавить доску" className="plus" />
-                        <p>Новая доска</p>
-                    </button>
-                )}
-                {showNewDesk && <NewDesk onCancel={handleCancelClick} />}
-            </div>
+            <CreateDesk />
         </>
     );
 }
-
 
 export default App;

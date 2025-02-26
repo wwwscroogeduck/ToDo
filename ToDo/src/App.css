@@ -10,14 +10,12 @@ body {
   min-height: 1200px;
 }
 
-
 header {
   background-color: #333;
   color: #fff;
   padding: 10px;
   text-align: center;
 }
-
 
 .logo-block {
   display: flex;
@@ -29,13 +27,13 @@ header {
   height: 40px;
   margin-right: 10px;
   fill: #ffffff;
+  outline: none;
 }
 
 .title {
   font-size: 24px;
   color: #ffffff;
 }
-
 
 .main-content {
   padding: 20px;
@@ -54,6 +52,7 @@ header {
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   margin-left: 20px;
   margin-top: 20px;
+  outline: none; 
 }
 
 .board-block:hover {
