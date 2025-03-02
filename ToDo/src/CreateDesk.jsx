@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import {Link } from 'react-router-dom';
 import NewDesk from './NewDesk.jsx';
 import './CreateDesk.css';
 
@@ -41,7 +42,9 @@ function CreateDesk() {
             <div className="created-desks">
                 {desks.map((desk, index) => (
                     <div key={index} className="created-desk">
-                        <h3>{desk}</h3>
+                        <Link to={`/desk/${desk}`}>
+                            <h3>{desk}</h3>
+                        </Link>
                     </div>
                 ))}
             </div>

@@ -1,20 +1,27 @@
 import './App.css';
 import CreateDesk from './CreateDesk.jsx';
-// import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import DeskPage from './DeskPage';
 
 function App() {
     return (
-        <>
+        <Router>
             <header>
                 <div className="logo-block">
-                    <img src="public/react.svg" alt="Логотип" className="logo" />
-                    <span className="title">SLT</span>
+                    <Link to="/">
+                        <img src="/public/react.svg" alt="Логотип" className="logo" />
+                        <span className="title">SLT</span>
+                    </Link>
                 </div>
             </header>
 
-            <CreateDesk />
-        </>
+            <Routes>
+                <Route path="/" element={<CreateDesk />} />
+                <Route path="/desk/:deskName" element={<DeskPage />} />
+            </Routes>
+        </Router>
     );
 }
 
 export default App;
+
