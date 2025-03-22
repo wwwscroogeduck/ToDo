@@ -1,185 +1,131 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { addList, addItem, toggleItemState } from './store/deskSlice';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import './DeskPage.css';
 
 function DeskPage() {
-    const { deskName } = useParams();
-    const [lists, setLists] = useState([
-        { id: 'list-1', name: '', items: [], showItems: false, newListName: '', newItemName: '' },
-    ]);
+  const dispatch = useDispatch();
+  const { deskName } = useParams();
+  const desk = useSelector((state) => state.desks[deskName] || { lists: [] });
+  const [newListName, setNewListName] = useState('');
+  const [newItemName, setNewItemName] = useState('');
 
-    const handleAddListClick = (listIndex) => {
-        if (lists[listIndex].newListName) {
-            const updatedLists = [...lists];
-            updatedLists[listIndex].name = updatedLists[listIndex].newListName;
-            updatedLists[listIndex].showItems = true;
-            updatedLists[listIndex].newListName = '';
-            if (listIndex === 0) {
-                updatedLists.push({
-                    id: 'list-2',
-                    name: '',
-                    items: [],
-                    showItems: false,
-                    newListName: '',
-                    newItemName: '',
-                });
-            }
-            setLists(updatedLists);
-        }
-    };
+  const handleAddListClick = () => {
+    if (newListName) {
+      dispatch(addList({ deskName, list: { name: newListName, items: [] } }));
+      setNewListName('');
+    }
+  };
 
-    const handleAddItemClick = (listIndex) => {
-        if (lists[listIndex].newItemName) {
-            const updatedLists = [...lists];
-            updatedLists[listIndex].items.push({
-                text: updatedLists[listIndex].newItemName,
-                marked: false,
-                completed: false,
-            });
-            updatedLists[listIndex].newItemName = '';
-            setLists(updatedLists);
-        }
-    };
+  const handleAddItemClick = (listIndex) => {
+    if (newItemName) {
+      dispatch(addItem({ deskName, listIndex, item: { text: newItemName, marked: false, completed: false } }));
+      setNewItemName('');
+    }
+  };
 
-    const handleListNameChange = (e, listIndex) => {
-        const updatedLists = [...lists];
-        updatedLists[listIndex].newListName = e.target.value;
-        setLists(updatedLists);
-    };
+  const handleListNameChange = (e) => {
+    setNewListName(e.target.value);
+  };
 
-    const handleItemNameChange = (e, listIndex) => {
-        const updatedLists = [...lists];
-        updatedLists[listIndex].newItemName = e.target.value;
-        setLists(updatedLists);
-    };
+  const handleItemNameChange = (e) => {
+    setNewItemName(e.target.value);
+  };
 
-    const handleKeyPress = (e, listIndex) => {
-        if (e.key === 'Enter') {
-            handleAddListClick(listIndex);
-        }
-    };
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleAddListClick();
+    }
+  };
 
-    const handleItemKeyPress = (e, listIndex) => {
-        if (e.key === 'Enter') {
-            handleAddItemClick(listIndex);
-        }
-    };
+  const handleItemKeyPress = (e, listIndex) => {
+    if (e.key === 'Enter') {
+      handleAddItemClick(listIndex);
+    }
+  };
 
-    const handleItemClick = (listIndex, itemIndex) => {
-        const updatedLists = [...lists];
-        if (updatedLists[listIndex].items[itemIndex].marked) {
-            updatedLists[listIndex].items[itemIndex].marked = false;
-            updatedLists[listIndex].items[itemIndex].completed = true;
-        } else {
-            updatedLists[listIndex].items[itemIndex].marked = true;
-            updatedLists[listIndex].items[itemIndex].completed = false;
-        }
-        setLists(updatedLists);
-    };
+  const handleItemClick = (listIndex, itemIndex) => {
 
-    const onDragEnd = (result) => {
-        const { destination, source } = result;
+    dispatch(toggleItemState({ deskName, listIndex, itemIndex }));
+  };
 
-        if (!destination) {
-            return;
-        }
+  return (
+    <div className="desk-page">
+      <div className="desk-info">
+        <h2>{deskName}</h2>
+      </div>
 
-        if (destination.droppableId === source.droppableId) {
-            return;
-        }
+      <DragDropContext>
+        <div className="lists-block">
+          {desk.lists.map((list, listIndex) => (
+            <Droppable key={listIndex} droppableId={listIndex.toString()}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="list-block"
+                >
+                  <div className="list-header">
+                    <h3>{list.name}</h3>
+                  </div>
 
-        const sourceList = lists.find((list) => list.id === source.droppableId);
-        const destinationList = lists.find((list) => list.id === destination.droppableId);
-
-        const sourceItems = [...sourceList.items];
-        const destinationItems = [...destinationList.items];
-
-        const [removedItem] = sourceItems.splice(source.index, 1);
-
-        destinationItems.splice(destination.index, 0, removedItem);
-
-        const updatedLists = lists.map((list) => {
-            if (list.id === source.droppableId) {
-                return { ...list, items: sourceItems };
-            } else if (list.id === destination.droppableId) {
-                return { ...list, items: destinationItems };
-            } else {
-                return list;
-            }
-        });
-
-        setLists(updatedLists);
-    };
-
-    return (
-        <div className="desk-page">
-            <div className="desk-info">
-                <h2>{deskName}</h2>
-            </div>
-
-            <DragDropContext onDragEnd={onDragEnd}>
-                <div className="lists-block">
-                    {lists.map((list, index) => (
-                        <Droppable key={list.id} droppableId={list.id}>
-                            {(provided) => (
-                                <div
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                    className="list-block"
-                                >
-                                    {list.name ? (
-                                        <div className="list-header">
-                                            <h3>{list.name}</h3>
-                                        </div>
-                                    ) : (
-                                        <input
-                                            type="text"
-                                            value={list.newListName}
-                                            onChange={(e) => handleListNameChange(e, index)}
-                                            onKeyDown={(e) => handleKeyPress(e, index)}
-                                            placeholder="Введите название списка"
-                                        />
-                                    )}
-
-                                    {list.showItems && (
-                                        <div className="list-items">
-                                            {list.items.map((item, itemIndex) => (
-                                                <Draggable key={`${list.id}-${itemIndex}`} draggableId={`${list.id}-${itemIndex}`} index={itemIndex}>
-                                                    {(provided) => (
-                                                        <div
-                                                            ref={provided.innerRef}
-                                                            {...provided.draggableProps}
-                                                            {...provided.dragHandleProps}
-                                                            className={`list-item ${item.marked ? 'marked' : ''} ${item.completed ? 'completed' : ''}`}
-                                                            onClick={() => handleItemClick(index, itemIndex)}
-                                                        >
-                                                            <p style={{ textDecoration: item.completed ? 'line-through' : 'none' }}>{item.text}</p>
-                                                            {item.marked && (
-                                                                <span className="checkmark checked"></span>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </Draggable>
-                                            ))}
-                                            <input
-                                                type="text"
-                                                value={list.newItemName}
-                                                onChange={(e) => handleItemNameChange(e, index)}
-                                                onKeyDown={(e) => handleItemKeyPress(e, index)}
-                                                placeholder="Введите элемент списка"
-                                            />
-                                        </div>
-                                    )}
-                                    {provided.placeholder}
-                                </div>
-                            )}
-                        </Droppable>
+                  <div className="list-items">
+                    {list.items.map((item, itemIndex) => (
+                      <Draggable key={itemIndex} draggableId={itemIndex.toString()} index={itemIndex}>
+                        {(provided) => (
+                          <div
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className={`list-item ${item.completed ? 'completed' : ''} ${item.marked ? 'marked' : ''}`}
+                            onClick={() => handleItemClick(listIndex, itemIndex)}
+                          >
+                            <p
+                              style={{
+                                textDecoration: item.completed ? 'line-through' : 'none',
+                                color: item.marked ? 'green' : '',
+                              }}
+                            >
+                              {item.text}
+                            </p>
+                            <div
+                              className={`checkmark ${item.marked ? 'marked' : ''}`}
+                              onClick={(e) => {
+                                e.stopPropagation(); 
+                                handleItemClick(listIndex, itemIndex);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </Draggable>
                     ))}
+                    <input
+                      type="text"
+                      value={newItemName}
+                      onChange={handleItemNameChange}
+                      onKeyDown={(e) => handleItemKeyPress(e, listIndex)}
+                      placeholder="Введите элемент списка"
+                    />
+                  </div>
+                  {provided.placeholder}
                 </div>
-            </DragDropContext>
+              )}
+            </Droppable>
+          ))}
+          <input
+            type="text"
+            value={newListName}
+            onChange={handleListNameChange}
+            onKeyDown={handleKeyPress}
+            placeholder="Введите название списка"
+          />
+          <button onClick={handleAddListClick}>Добавить список</button>
         </div>
-    );
+      </DragDropContext>
+    </div>
+  );
 }
 
 export default DeskPage;
