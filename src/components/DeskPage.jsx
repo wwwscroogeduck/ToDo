@@ -1,54 +1,88 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { addList, addItem, toggleItemState } from './store/deskSlice';
+import { addList, addItem, toggleItemState } from '../store/deskSlice'; 
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import './DeskPage.css';
+import '../style/DeskPage.css';
 
 function DeskPage() {
   const dispatch = useDispatch();
-  const { deskName } = useParams();
-  const desk = useSelector((state) => state.desks[deskName] || { lists: [] });
-  const [newListName, setNewListName] = useState('');
-  const [newItemName, setNewItemName] = useState('');
+  const { deskName } = useParams(); 
 
+  
+  const desk = useSelector((state) => state.desks[deskName] || { lists: [] });
+
+  
+  const [newListName, setNewListName] = useState('');  
+  const [inputValues, setInputValues] = useState({}); 
+
+  
+  if (!desk) {
+    return <div>Доска не найдена</div>;
+  }
+
+  
   const handleAddListClick = () => {
     if (newListName) {
+      
       dispatch(addList({ deskName, list: { name: newListName, items: [] } }));
       setNewListName('');
     }
   };
 
+  
   const handleAddItemClick = (listIndex) => {
-    if (newItemName) {
-      dispatch(addItem({ deskName, listIndex, item: { text: newItemName, marked: false, completed: false } }));
-      setNewItemName('');
+    const itemName = inputValues[listIndex]; 
+    if (itemName) {
+      dispatch(
+        addItem({
+          deskName,
+          listIndex,
+          item: { text: itemName, marked: false, completed: false },
+        })
+      );
+      setInputValues({ ...inputValues, [listIndex]: '' });
     }
   };
 
-  const handleListNameChange = (e) => {
-    setNewListName(e.target.value);
-  };
-
-  const handleItemNameChange = (e) => {
-    setNewItemName(e.target.value);
+  
+  const handleItemNameChange = (e, listIndex) => {
+    const value = e.target.value;
+    setInputValues((prevState) => ({
+      ...prevState,
+      [listIndex]: value, 
+    }));
   };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      handleAddListClick();
+      handleAddListClick(); 
     }
   };
 
   const handleItemKeyPress = (e, listIndex) => {
     if (e.key === 'Enter') {
-      handleAddItemClick(listIndex);
+      handleAddItemClick(listIndex); 
     }
   };
 
   const handleItemClick = (listIndex, itemIndex) => {
+    dispatch(toggleItemState({ deskName, listIndex, itemIndex })); 
+  };
 
-    dispatch(toggleItemState({ deskName, listIndex, itemIndex }));
+  const handleDragEnd = (result) => {
+    const { destination, source } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (destination.droppableId === source.droppableId) {
+      const list = desk.lists[source.droppableId];
+      const [removed] = list.items.splice(source.index, 1);
+      list.items.splice(destination.index, 0, removed);
+      dispatch(addList({ deskName, list }));
+    }
   };
 
   return (
@@ -57,7 +91,7 @@ function DeskPage() {
         <h2>{deskName}</h2>
       </div>
 
-      <DragDropContext>
+      <DragDropContext onDragEnd={handleDragEnd}>
         <div className="lists-block">
           {desk.lists.map((list, listIndex) => (
             <Droppable key={listIndex} droppableId={listIndex.toString()}>
@@ -68,7 +102,7 @@ function DeskPage() {
                   className="list-block"
                 >
                   <div className="list-header">
-                    <h3>{list.name}</h3>
+                    <h3>{list.name || 'Введите название списка'}</h3>
                   </div>
 
                   <div className="list-items">
@@ -93,7 +127,7 @@ function DeskPage() {
                             <div
                               className={`checkmark ${item.marked ? 'marked' : ''}`}
                               onClick={(e) => {
-                                e.stopPropagation(); 
+                                e.stopPropagation();
                                 handleItemClick(listIndex, itemIndex);
                               }}
                             />
@@ -103,9 +137,9 @@ function DeskPage() {
                     ))}
                     <input
                       type="text"
-                      value={newItemName}
-                      onChange={handleItemNameChange}
-                      onKeyDown={(e) => handleItemKeyPress(e, listIndex)}
+                      value={inputValues[listIndex] || ''}
+                      onChange={(e) => handleItemNameChange(e, listIndex)} 
+                      onKeyDown={(e) => handleItemKeyPress(e, listIndex)} 
                       placeholder="Введите элемент списка"
                     />
                   </div>
@@ -117,7 +151,7 @@ function DeskPage() {
           <input
             type="text"
             value={newListName}
-            onChange={handleListNameChange}
+            onChange={(e) => setNewListName(e.target.value)} 
             onKeyDown={handleKeyPress}
             placeholder="Введите название списка"
           />

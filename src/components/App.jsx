@@ -1,12 +1,8 @@
-import './App.css';
+import '../style/App.css';
 import CreateDesk from './CreateDesk.jsx';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import DeskPage from './DeskPage';
-import { useSelector } from 'react-redux'; 
-
+import DeskPage from './DeskPage.jsx';  
 function App() {
-  const desks = useSelector((state) => state.desks.desks);
-
   return (
     <Router>
       <header>
@@ -19,8 +15,8 @@ function App() {
       </header>
 
       <Routes>
-        <Route path="/" element={<CreateDesk />} />
-        <Route path="/desk/:deskName" element={<DeskPage desks={desks} />} />
+        <Route path="/" element={<CreateDesk />} /> 
+        <Route path="/desk/:deskName" element={<DeskPage />} />
       </Routes>
     </Router>
   );

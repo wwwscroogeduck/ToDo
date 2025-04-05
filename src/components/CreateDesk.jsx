@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addList } from './store/deskSlice'; // Импортируем addList экшен
+import { addList } from '../store/deskSlice'; 
 import { Link } from 'react-router-dom';
 import NewDesk from './NewDesk'; 
-import './CreateDesk.css';
+import '../style/CreateDesk.css';
 
 function CreateDesk() {
   const [showNewDesk, setShowNewDesk] = useState(false);
-  const desks = useSelector((state) => state.desks);  // Получаем список досок из Redux
+  const desks = useSelector((state) => state.desks);  
   const dispatch = useDispatch();
 
   const handleNewDeskClick = () => {
@@ -20,8 +20,9 @@ function CreateDesk() {
 
   const handleSaveClick = (name) => {
     if (name) {
-      dispatch(addList({ deskName: name, list: { name, items: [] } }));
-      setShowNewDesk(false);
+      
+      dispatch(addList({ deskName: name, list: [{ name: '', items: [] }] }));  
+      setShowNewDesk(false); 
     }
   };
 
@@ -35,11 +36,14 @@ function CreateDesk() {
           </button>
         )}
         {showNewDesk && (
-          <NewDesk onCancel={handleCancelClick} onSave={handleSaveClick} />
+          <NewDesk 
+            onCancel={handleCancelClick} 
+            onSave={handleSaveClick} 
+          />
         )}
       </div>
       <div className="created-desks">
-        {Object.keys(desks).map((deskName, index) => (  // Перебираем все ключи в desks
+        {Object.keys(desks).map((deskName, index) => (  
           <div key={index} className="created-desk">
             <Link to={`/desk/${deskName}`}>
               <h3>{deskName}</h3>

@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+
 const initialState = {};
 
 const deskSlice = createSlice({
@@ -8,33 +9,65 @@ const deskSlice = createSlice({
   reducers: {
     addList: (state, action) => {
       const { deskName, list } = action.payload;
+      
+      
       if (!state[deskName]) {
         state[deskName] = { lists: [] };
       }
-      state[deskName].lists.push(list);
+
+      
+      state[deskName].lists = [...state[deskName].lists, list]; 
     },
+    
     addItem: (state, action) => {
       const { deskName, listIndex, item } = action.payload;
+      
+      
       if (state[deskName]) {
-        state[deskName].lists[listIndex].items.push(item);
+        const updatedLists = state[deskName].lists.map((list, index) => {
+          if (index === listIndex) {
+            
+            return { ...list, items: [...list.items, item] };
+          }
+          return list;
+        });
+
+        
+        state[deskName].lists = updatedLists;
       }
     },
+    
     toggleItemState: (state, action) => {
       const { deskName, listIndex, itemIndex } = action.payload;
-      const item = state[deskName].lists[listIndex].items[itemIndex];
+
       
-      if (!item.marked && !item.completed) {
-        item.marked = true; 
-      } else if (item.marked && !item.completed) {
-        item.completed = true;
-      } else {
-        item.marked = false;  
-        item.completed = false;
+      if (state[deskName]) {
+        const updatedLists = state[deskName].lists.map((list, listIdx) => {
+          if (listIdx === listIndex) {
+            
+            const updatedItems = list.items.map((item, itemIdx) => {
+              if (itemIdx === itemIndex) {
+                
+                return {
+                  ...item,
+                  marked: !item.marked,
+                  completed: item.marked ? false : item.completed,
+                };
+              }
+              return item;
+            });
+
+            
+            return { ...list, items: updatedItems };
+          }
+          return list;
+        });
+
+        state[deskName].lists = updatedLists;
       }
     },
   },
 });
 
 export const { addList, addItem, toggleItemState } = deskSlice.actions;
-
 export default deskSlice.reducer;

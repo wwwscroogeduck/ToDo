@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import './NewDesk.css';
+import '../style/NewDesk.css';
 
 function NewDesk({ onCancel, onSave }) {
   const [deskName, setDeskName] = useState('');
